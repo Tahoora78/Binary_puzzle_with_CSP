@@ -53,6 +53,14 @@ class Puzzle_csp:
                         (self.puzzle[i][j] == '1' and self.puzzle[i][j+1] == '1' and self.puzzle[i][j+2] == '1'):
                     print("having 3 in row")
                     return False
+
+        if len(self.puzzle[i]) > 4:
+            for i in range(len(self.puzzle)):
+                for j in range(len(self.puzzle[i])-4):
+                    if (self.puzzle[i][j] == '0' and self.puzzle[i][j+1] == '0' and self.puzzle[i][j+2] == '-' and self.puzzle[i][j+3] == '1' and self.puzzle[i][j+4] == '1') or\
+                            (self.puzzle[i][j] == '1' and self.puzzle[i][j+1] == '1' and self.puzzle[i][j+2] == '-' and self.puzzle[i][j+3] == '0' and self.puzzle[i][j+4] == '0'):
+                        print("having 00-11 or 11-00 in row")
+                        return False
         #column
         for i in range(len(self.puzzle)):
             column = [row[i] for row in self.puzzle]
@@ -61,6 +69,15 @@ class Puzzle_csp:
                         (column[j] == '1' and column[j+1] == '1' and column[j+2] == '1'):
                     print("having 3 in column")
                     return False
+
+        if len(self.puzzle[i]) > 4:
+            for i in range(len(self.puzzle)):
+                column = [row[i] for row in self.puzzle]
+                for j in range(len(column)-4):
+                    if (column[j] == '0' and column[j+1] == '0' and column[j+2] == '-' and column[j+3] == '1' and column[j+4] == '1') or\
+                            (column[j] == '1' and column[j+1] == '1' and column[j+2] == '-' and column[j+3] == '0' and column[j+4] == '0'):
+                        print("having 00-11 or 11-00 in column")
+                        return False
 
 
         return True
@@ -92,6 +109,46 @@ class Puzzle_csp:
                         self.degree[j][i] = '1'
         print("column checking", self.degree)
 
+        #row
+        for i in range(len(self.puzzle)):
+            for j in range(len(self.puzzle[i])-2):
+                # 00- / 0-0 / -00
+                if (self.puzzle[i][j] == '0' and self.puzzle[i][j+1] == '0' and self.puzzle[i][j+2] == '-'):
+                    self.degree[i][j+2] = self.degree[i][j+2].replace('0', '')
+                if (self.puzzle[i][j] == '0' and self.puzzle[i][j+1] == '-' and self.puzzle[i][j+2] == '0'):
+                    self.degree[i][j+1] = self.degree[i][j+1].replace('0', '')
+                if (self.puzzle[i][j] == '-' and self.puzzle[i][j+1] == '0' and self.puzzle[i][j+2] == '0'):
+                    self.degree[i][j] = self.degree[i][j].replace('0', '')
+
+                # 11- / 1-1 / -11
+                if (self.puzzle[i][j] == '1' and self.puzzle[i][j+1] == '1' and self.puzzle[i][j+2] == '-'):
+                    self.degree[i][j+2] = self.degree[i][j+2].replace('1', '')
+                if (self.puzzle[i][j] == '1' and self.puzzle[i][j+1] == '-' and self.puzzle[i][j+2] == '1'):
+                    self.degree[i][j+1] = self.degree[i][j+1].replace('1', '')
+                if (self.puzzle[i][j] == '-' and self.puzzle[i][j+1] == '1' and self.puzzle[i][j+2] == '1'):
+                    self.degree[i][j] = self.degree[i][j].replace('1', '')
+        print("row repeat checking", self.degree)
+
+        #column
+        for i in range(len(self.puzzle)):
+            column = [row[i] for row in self.puzzle]
+            for j in range(len(self.puzzle[i])-2):
+                # 00- / 0-0 / -00
+                if (column[j] == '0' and column[j+1] == '0' and column[j+2] == '-'):
+                    self.degree[i][j+2] = self.degree[i][j+2].replace('0', '')
+                if (column[j] == '0' and column[j+1] == '-' and column[j+2] == '0'):
+                    self.degree[i][j+1] = self.degree[i][j+1].replace('0', '')
+                if (column[j] == '-' and column[j+1] == '0' and column[j+2] == '0'):
+                    self.degree[i][j] = self.degree[i][j].replace('0', '')
+
+                # 11- / 1-1 / -11
+                if (column[j] == '1' and column[j+1] == '1' and column[j+2] == '-'):
+                    self.degree[i][j+2] = self.degree[i][j+2].replace('1', '')
+                if (column[j] == '1' and column[j+1] == '-' and column[j+2] == '1'):
+                    self.degree[i][j+1] = self.degree[i][j+1].replace('1', '')
+                if (column[j] == '-' and column[j+1] == '1' and column[j+2] == '1'):
+                    self.degree[i][j] = self.degree[i][j].replace('1', '')
+        print("column repeat checking", self.degree)
 
     def calling_methods(self):
         self.check_possible()
