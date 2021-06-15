@@ -32,7 +32,7 @@ class Puzzle_csp:
     def check_unique(self):
         # row
         for i in range(len(self.puzzle)):
-            if not("".join(self.puzzle[i]).contains('-')):
+            if not('-' in "".join(self.puzzle[i])):
                 for j in range(i+1, len(self.puzzle)):
                     if ("".join(self.puzzle[i]) == "".join(self.puzzle[j])):
                         return False
@@ -40,7 +40,7 @@ class Puzzle_csp:
         # column
         for i in range(len(self.puzzle)):
             column = [row[i] for row in self.puzzle]
-            if not("".join(column).contains('-')):
+            if not('-' in "".join(column)):
                 for j in range(i+1, len(self.puzzle)):
                     if ("".join(column) == "".join(self.puzzle[j])):
                         return False
@@ -94,7 +94,7 @@ class Puzzle_csp:
                         print("having 00-11 or 11-00 in column")
                         return False
 
-        if check_unique(self):
+        if self.check_unique():
             return True
         else:
             return False
@@ -152,25 +152,34 @@ class Puzzle_csp:
             for j in range(len(self.puzzle[i])-2):
                 # 00- / 0-0 / -00
                 if (column[j] == '0' and column[j+1] == '0' and column[j+2] == '-'):
-                    self.degree[i][j+2] = self.degree[i][j+2].replace('0', '')
+                    self.degree[j+2][i] = self.degree[j+2][i].replace('0', '')
                 if (column[j] == '0' and column[j+1] == '-' and column[j+2] == '0'):
-                    self.degree[i][j+1] = self.degree[i][j+1].replace('0', '')
+                    self.degree[j+1][i] = self.degree[j+1][i].replace('0', '')
                 if (column[j] == '-' and column[j+1] == '0' and column[j+2] == '0'):
-                    self.degree[i][j] = self.degree[i][j].replace('0', '')
+                    self.degree[j][i] = self.degree[j][i].replace('0', '')
 
                 # 11- / 1-1 / -11
                 if (column[j] == '1' and column[j+1] == '1' and column[j+2] == '-'):
-                    self.degree[i][j+2] = self.degree[i][j+2].replace('1', '')
+                    self.degree[j+2][i] = self.degree[j+2][i].replace('1', '')
                 if (column[j] == '1' and column[j+1] == '-' and column[j+2] == '1'):
-                    self.degree[i][j+1] = self.degree[i][j+1].replace('1', '')
+                    self.degree[j+1][i] = self.degree[j+1][i].replace('1', '')
                 if (column[j] == '-' and column[j+1] == '1' and column[j+2] == '1'):
-                    self.degree[i][j] = self.degree[i][j].replace('1', '')
+                    self.degree[j][i] = self.degree[j][i].replace('1', '')
         print("column repeat checking", self.degree)
+
+    def MRV_heuristic(self):
+        for i in range(len(self.puzzle)):
+            for j in range(len(self.puzzle[i])):
+                if len(self.degree[i][j]) == 1:
+                    self.puzzle[i][j] = self.degree[i][j]
+        print("after first MRV", self.puzzle)
+
 
 
     def calling_methods(self):
         self.check_possible()
         self.calculate_degree()
+        self.MRV_heuristic()
 
 puzzle_csp = Puzzle_csp()
 puzzle_csp.calling_methods()
