@@ -30,7 +30,22 @@ class Puzzle_csp:
         return True
 
     def check_unique(self):
-        pass
+        # row
+        for i in range(len(self.puzzle)):
+            if not("".join(self.puzzle[i]).contains('-')):
+                for j in range(i+1, len(self.puzzle)):
+                    if ("".join(self.puzzle[i]) == "".join(self.puzzle[j])):
+                        return False
+
+        # column
+        for i in range(len(self.puzzle)):
+            column = [row[i] for row in self.puzzle]
+            if not("".join(column).contains('-')):
+                for j in range(i+1, len(self.puzzle)):
+                    if ("".join(column) == "".join(self.puzzle[j])):
+                        return False
+
+        return True
 
     def check_possible(self):
         #counting number of zero and one in every column and row
@@ -79,8 +94,10 @@ class Puzzle_csp:
                         print("having 00-11 or 11-00 in column")
                         return False
 
-
-        return True
+        if check_unique(self):
+            return True
+        else:
+            return False
 
     def calculate_degree(self):
         print("calculate degree")
@@ -149,6 +166,7 @@ class Puzzle_csp:
                 if (column[j] == '-' and column[j+1] == '1' and column[j+2] == '1'):
                     self.degree[i][j] = self.degree[i][j].replace('1', '')
         print("column repeat checking", self.degree)
+
 
     def calling_methods(self):
         self.check_possible()
