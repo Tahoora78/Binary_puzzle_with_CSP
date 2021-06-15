@@ -1,0 +1,14 @@
+                if (column[j] == '0' and column[j+1] == '0' and column[j+2] == '-'):
+                    self.degree[i][j+2] = self.degree[i][j+2].replace('0', '')
+                if (column[j] == '0' and column[j+1] == '-' and column[j+2] == '0'):
+                    self.degree[i][j+1] = self.degree[i][j+1].replace('0', '')
+                if (column[j] == '-' and column[j+1] == '0' and column[j+2] == '0'):
+                    self.degree[i][j] = self.degree[i][j].replace('0', '')
+
+                # 11- / 1-1 / -11
+                if (column[j] == '1' and column[j+1] == '1' and column[j+2] == '-'):
+                    self.degree[i][j+2] = self.degree[i][j+2].replace('1', '')
+                if (column[j] == '1' and column[j+1] == '-' and column[j+2] == '1'):
+                    self.degree[i][j+1] = self.degree[i][j+1].replace('1', '')
+                if (column[j] == '-' and column[j+1] == '1' and column[j+2] == '1'):
+                    self.degree[i][j] = self.degree[i][j].replace('1', '')

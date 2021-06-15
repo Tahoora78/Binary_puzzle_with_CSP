@@ -5,12 +5,13 @@ class Puzzle_csp:
     def __init__(self):
         self.puzzle = []
         self.degree = []
+        self.backtrack_puzzles = []
+        self.backtrack_degrees = []
         self.getting_input()
         self.zero_row = []
         self.one_row = []
         self.zero_column = []
         self.one_column = []
-
 
     def getting_input(self):
         nx, ny = input().split(' ')
@@ -196,12 +197,40 @@ class Puzzle_csp:
         return True
 
     def random_choosing(self):
+        # store previous self.degree for backtracking
+        self.backtrack_puzzles.append(copy.deepcopy(self.puzzle))
+        self.backtrack_degrees.append(copy.deepcopy(self.degree))
+
+        # random choosing
+        fine = False
         for i in range(len(self.degree)):
             for j in range(len(self.degree)):
                 if len(self.degree[i][j])==2:
                     self.degree[i][j] = self.degree[i][j].replace('1', '')
                     print("random", i, j)
+                    fine = True
                     break
+            if fine:
+                break
+
+    def reverse_MRV(self):
+        print("len backtrack_puzzles", len(self.backtrack_puzzles))
+        self.puzzle = self.backtrack_puzzles[-1]
+        self.degree = self.backtrack_degrees[-1]
+        self.backtrack_degrees.pop()
+        self.backtrack_puzzles.pop()
+        print("len backtrack_puzzles after pop", len(self.backtrack_puzzles))
+
+        fine = False
+        for i in range(len(self.degree)):
+            for j in range(len(self.degree)):
+                if len(self.degree[i][j])==2:
+                    self.degree[i][j] = self.degree[i][j].replace('0', '')
+                    print("random backtrack", i, j)
+                    fine = True
+                    break
+            if fine:
+                break
 
     def MRV_heuristic(self):
         pre_puzzle = copy.deepcopy(self.puzzle)
@@ -224,17 +253,42 @@ class Puzzle_csp:
                     return False
         return True
 
+    def check_still_possible(self):
+        for i in range(len(self.puzzle)):
+            for j in range(len(self.puzzle)):
+                if self.puzzle[i][j] == '-' and len(self.degree[i][j]) == 0:
+                    return False
+        return True
+
     def calling_methods(self):
         self.check_possible()
         self.calculate_degree()
+
         while True:
+            # fill the certain cells
             while not(self.MRV_heuristic()):
                 self.calculate_degree()
-            print("solved ", self.puzzle_solved())
+
+
+            # if there is still any - in puzzle
             if not(self.puzzle_solved()):
                 self.random_choosing()
 
             else:
+                if self.check_unique():
+                    print("puzzle solved")
+                    break
+                else:
+                    # backtrack if we had random_choosing
+                    if len(self.backtrack_puzzles) > 0:
+                        self.reverse_MRV()
+                    else:
+                        print("not possible because we have non unique row or column")
+                        break
+
+            # check if the puzzle still can have an answer
+            if not(self.check_still_possible()):
+                print("not possible")
                 break
 
 puzzle_csp = Puzzle_csp()
