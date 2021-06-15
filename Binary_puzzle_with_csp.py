@@ -1,3 +1,6 @@
+import copy
+
+
 class Puzzle_csp:
     def __init__(self):
         self.puzzle = []
@@ -46,6 +49,23 @@ class Puzzle_csp:
                         return False
 
         return True
+
+    def counting_one_zero(self):
+        # counting number of zero and one in every column and row
+        num = len(self.puzzle) // 2
+        self.one_row = []
+        self.one_column = []
+        self.zero_row = []
+        self.zero_column = []
+
+        print("len self.puzzle", len(self.puzzle))
+        for i in range(len(self.puzzle)):
+            self.one_row.append(self.puzzle[i].count('1'))
+            self.zero_row.append(self.puzzle[i].count('0'))
+            column = [row[i] for row in self.puzzle]
+            self.one_column.append(column.count('1'))
+            self.zero_column.append(column.count('0'))
+
 
     def check_possible(self):
         #counting number of zero and one in every column and row
@@ -101,6 +121,7 @@ class Puzzle_csp:
 
     def calculate_degree(self):
         print("calculate degree")
+        self.counting_one_zero()
         num = len(self.puzzle)//2
         #row
         for i in range(len(self.puzzle)):
@@ -167,19 +188,54 @@ class Puzzle_csp:
                     self.degree[j][i] = self.degree[j][i].replace('1', '')
         print("column repeat checking", self.degree)
 
+    def puzzle_solved(self):
+        for i in range(len(self.puzzle)):
+            for j in range(len(self.puzzle)):
+                if '-' in self.puzzle[i][j]:
+                    return False
+        return True
+
+    def random_choosing(self):
+        for i in range(len(self.degree)):
+            for j in range(len(self.degree)):
+                if len(self.degree[i][j])==2:
+                    self.degree[i][j] = self.degree[i][j].replace('1', '')
+                    print("random", i, j)
+                    break
+
     def MRV_heuristic(self):
+        pre_puzzle = copy.deepcopy(self.puzzle)
+        print("pre_puzzle", pre_puzzle)
         for i in range(len(self.puzzle)):
             for j in range(len(self.puzzle[i])):
                 if len(self.degree[i][j]) == 1:
                     self.puzzle[i][j] = self.degree[i][j]
+                    self.degree[i][j] = self.degree[i][j].replace(self.puzzle[i][j], '')
         print("after first MRV", self.puzzle)
+        print("check_similar", self.check_similar(pre_puzzle))
+        #print("pre_puzzle", pre_puzzle)
+        print("self_puzzle", self.puzzle)
+        return self.check_similar(pre_puzzle)
 
-
+    def check_similar(self, pre_puzzle):
+        for i in range(len(self.puzzle)):
+            for j in range(len(self.puzzle)):
+                if self.puzzle[j][i] != pre_puzzle[j][i]:
+                    return False
+        return True
 
     def calling_methods(self):
         self.check_possible()
         self.calculate_degree()
-        self.MRV_heuristic()
+        while True:
+            while not(self.MRV_heuristic()):
+                self.calculate_degree()
+            print("solved ", self.puzzle_solved())
+            if not(self.puzzle_solved()):
+                self.random_choosing()
+
+            else:
+                break
 
 puzzle_csp = Puzzle_csp()
 puzzle_csp.calling_methods()
