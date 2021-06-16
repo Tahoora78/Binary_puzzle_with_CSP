@@ -240,6 +240,7 @@ class Puzzle_csp:
                 if len(self.degree[i][j]) == 1:
                     self.puzzle[i][j] = self.degree[i][j]
                     self.degree[i][j] = self.degree[i][j].replace(self.puzzle[i][j], '')
+
         print("after first MRV", self.puzzle)
         print("check_similar", self.check_similar(pre_puzzle))
         #print("pre_puzzle", pre_puzzle)
@@ -268,11 +269,13 @@ class Puzzle_csp:
             # fill the certain cells
             while not(self.MRV_heuristic()):
                 self.calculate_degree()
-
+                if not (self.check_possible()) and len(self.backtrack_puzzles) > 0:
+                    self.reverse_MRV()
 
             # if there is still any - in puzzle
             if not(self.puzzle_solved()):
                 self.random_choosing()
+                self.calculate_degree()
 
             else:
                 if self.check_unique():
@@ -291,5 +294,5 @@ class Puzzle_csp:
                 print("not possible")
                 break
 
-puzzle_csp = Puzzle_csp()
-puzzle_csp.calling_methods()
+#puzzle_csp = Puzzle_csp()
+#puzzle_csp.calling_methods()
