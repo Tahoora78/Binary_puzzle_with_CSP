@@ -33,36 +33,121 @@ class Puzzle_csp:
             self.mac_degree.append(degree_list)
     """
 
-    def updating_after_first_change(self, x, y):
-        neighbors_row, neighbors_column = self.find_neighbors(x, y)
-        for i,j in neighbors_row:
-            pass
+    def updating_degrees(self, x, y):
+        print("updating_degrees")
+        queue = self.find_neighbors(x, y)
+        while len(queue) > 0:
+            changed = self.update_cell_degree(x, y)
+            print("changed, x, y: ", changed, x, y)
+            break
 
-    def updating_after_degree_updated(self):
+    def update_cell_degree(self, x, y):
+        pre_degree = copy.deepcopy(self.degree[x][y])
 
+        csp.Puzzle_csp.counting_one_zero(self)
+        num = len(self.puzzle)//2
+
+        #row
+        if self.one_row[x] == num:
+            if self.puzzle[x][y]=='-':
+                self.degree[x][y] = self.degree[x][y].replace('1', '')
+        if self.zero_row[x] == num:
+            if self.puzzle[x][y] == '-':
+                self.degree[x][y] = self.degree[x][y].replace('0', '')
+        print("row updating", self.degree)
+
+        #column
+        if self.one_column[y] == num:
+            if self.puzzle[x][y] == '-':
+                self.degree[x][y] = self.degree[x][y].replace('1', '')
+        if self.zero_column[y] == num:
+            if self.puzzle[x][y] == '-':
+                self.degree[x][y] = self.degree[x][y].replace('0', '')
+        print("column updating", self.degree)
+
+        #column
+        # 00-
+        if y > 1:
+            if (self.puzzle[x][y-2] == '0' and self.puzzle[x][y-1] == '0' and self.puzzle[x][y] == '-'):
+                self.degree[x][y] = self.degree[x][y].replace('0', '')
+        # 0-0
+        if y > 0 and y < len(self.puzzle) - 1:
+            if (self.puzzle[x][y-1] == '0' and self.puzzle[x][y] == '-' and self.puzzle[x][y+1] == '0'):
+                self.degree[x][y] = self.degree[x][y].replace('0', '')
+        # -00
+        if y < len(self.puzzle) - 2:
+            if (self.puzzle[x][y] == '-' and self.puzzle[x][y+1] == '0' and self.puzzle[x][y+2] == '0'):
+                self.degree[x][y] = self.degree[x][y].replace('0', '')
+        # 11-
+        if y > 1:
+            if (self.puzzle[x][y-2] == '1' and self.puzzle[x][y-1] == '1' and self.puzzle[x][y] == '-'):
+                self.degree[x][y] = self.degree[x][y].replace('1', '')
+        # 1-1
+        if y > 0 and y < len(self.puzzle) - 1:
+            if (self.puzzle[x][y-1] == '1' and self.puzzle[x][y] == '-' and self.puzzle[x][y+1] == '1'):
+                self.degree[x][y] = self.degree[x][y].replace('1', '')
+        # -11
+        if y < len(self.puzzle) - 2:
+            if (self.puzzle[x][y] == '-' and self.puzzle[x][y+1] == '1' and self.puzzle[x][y+2] == '1'):
+                self.degree[x][y] = self.degree[x][y].replace('1', '')
+        print("column repeat updating", self.degree)
+
+        #row
+        # 00-
+        if x > 1:
+            if (self.puzzle[x-2][y] == '0' and self.puzzle[x-1][y] == '0' and self.puzzle[x][y] == '-'):
+                self.degree[x][y] = self.degree[x][y].replace('0', '')
+        # 0-0
+        if x > 0 and x < len(self.puzzle) - 1:
+            if (self.puzzle[x-1][y] == '0' and self.puzzle[x][y] == '-' and self.puzzle[x+1][y] == '0'):
+                self.degree[x][y] = self.degree[x][y].replace('0', '')
+        # -00
+        if x < len(self.puzzle) - 2:
+            if (self.puzzle[x][y] == '-' and self.puzzle[x+1][y] == '0' and self.puzzle[x+2][y] == '0'):
+                self.degree[x][y] = self.degree[x][y].replace('0', '')
+        # 11-
+        if x > 1:
+            if (self.puzzle[x-2][y] == '1' and self.puzzle[x-1][y] == '1' and self.puzzle[x][y] == '-'):
+                self.degree[x][y] = self.degree[x][y].replace('1', '')
+        # 1-1
+        if x > 0 and x < len(self.puzzle) - 1:
+            if (self.puzzle[x-1][y] == '1' and self.puzzle[x][y] == '-' and self.puzzle[x+1][y] == '1'):
+                self.degree[x][y] = self.degree[x][y].replace('1', '')
+        # -11
+        if x < len(self.puzzle) - 2:
+            if (self.puzzle[x][y] == '-' and self.puzzle[x+1][y] == '1' and self.puzzle[x+2][y] == '1'):
+                self.degree[x][y] = self.degree[x][y].replace('1', '')
+        print("row repeat updating", self.degree)
+
+        if pre_degree == self.degree[x][y]:
+            return False
+        else:
+            return True
 
     def find_neighbors(self, x, y):
-        neighbors_row = []
-        neighbors_column = []
+        print("find_neighbors")
+        neighbors = []
         row = self.puzzle[x]
         column = [row[y] for row in self.puzzle]
         for i in range(len(row)):
             if row[i]=='-' and i!=x:
-                neighbors_row.append([i, y])
+                neighbors.append([i, y])
         for j in range(len(column)):
             if column[j]=='-' and j!=y:
-                neighbors_column.append([x, j])
-        return neighbors_row, neighbors_column
+                neighbors.append([x, j])
+        print("len neighbors", len(neighbors))
+        return neighbors
 
     def MRV_heuristic(self):
         pre_puzzle = copy.deepcopy(self.puzzle)
         print("pre_puzzle", pre_puzzle)
         for i in range(len(self.puzzle)):
-            for j in range(len(self.puzzle[i])):
+            for j in range(len(self.puzzle)):
                 if len(self.degree[i][j]) == 1:
                     self.puzzle[i][j] = self.degree[i][j]
                     self.degree[i][j] = self.degree[i][j].replace(self.puzzle[i][j], '')
-                    self.updating_degree(i, j)
+                    self.updating_degrees(i, j)
+                    print("residam be updating_degrees")
                     return False
         print("after first MRV", self.puzzle)
 
@@ -71,12 +156,15 @@ class Puzzle_csp:
         return True
 
     def calling_method(self):
-        csp.Puzzle_csp.check_possible()
+        csp.Puzzle_csp.check_possible(self)
+        csp.Puzzle_csp.calculate_degree(self)
+
         #self.calculating_mac_degree()
         while True:
             if self.MRV_heuristic():
                 break
             else:
+                pass
 
 
 puzzle_csp = Puzzle_csp()
