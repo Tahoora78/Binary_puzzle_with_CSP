@@ -115,14 +115,14 @@ class Puzzle_csp:
                         print("having 00-11 or 11-00 in column")
                         return False
 
-        if self.check_unique():
+        if Puzzle_csp.check_unique(self):
             return True
         else:
             return False
 
     def calculate_degree(self):
         print("calculate degree")
-        self.counting_one_zero()
+        Puzzle_csp.counting_one_zero(self)
         num = len(self.puzzle)//2
         #row
         for i in range(len(self.puzzle)):
