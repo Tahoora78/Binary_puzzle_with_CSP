@@ -35,21 +35,28 @@ class Puzzle_csp:
 
     def updating_degrees(self, x, y):
         print("updating_degrees")
-        queue = self.find_neighbors(x, y)
-        while len(queue) > 0:
-            changed = self.update_cell_degree(x, y)
+        queue_ = self.find_neighbors(x, y)
+        print("neighbors", queue_)
+        while len(queue_) > 0:
+            print("quew", queue_, queue_[0][0])
+            changed = self.update_cell_degree(queue_[0][0], queue_[0][1])
             print("changed, x, y: ", changed, x, y)
-            break
+            current_cell = queue_.pop(0)
+            if changed:
+                new_neighbors = self.find_neighbors(current_cell[0], current_cell[1])
+                for i in new_neighbors:
+                    queue_.append(i)
 
     def update_cell_degree(self, x, y):
         pre_degree = copy.deepcopy(self.degree[x][y])
+        print("before updating", self.degree)
 
         csp.Puzzle_csp.counting_one_zero(self)
         num = len(self.puzzle)//2
 
         #row
         if self.one_row[x] == num:
-            if self.puzzle[x][y]=='-':
+            if self.puzzle[x][y] == '-':
                 self.degree[x][y] = self.degree[x][y].replace('1', '')
         if self.zero_row[x] == num:
             if self.puzzle[x][y] == '-':
@@ -129,13 +136,17 @@ class Puzzle_csp:
         neighbors = []
         row = self.puzzle[x]
         column = [row[y] for row in self.puzzle]
-        for i in range(len(row)):
-            if row[i]=='-' and i!=x:
-                neighbors.append([i, y])
-        for j in range(len(column)):
-            if column[j]=='-' and j!=y:
+        print("______________________________________________")
+        print("column", column)
+        for j in range(len(row)):
+            print("row", row[j], end=' ')
+            if row[j]=='-' and j!=y:
                 neighbors.append([x, j])
+        for i in range(len(row)):
+            if column[i]=='-' and i!=x:
+                neighbors.append([i, y])
         print("len neighbors", len(neighbors))
+        print("neighbors in function", neighbors)
         return neighbors
 
     def MRV_heuristic(self):
@@ -153,6 +164,7 @@ class Puzzle_csp:
 
         # print("pre_puzzle", pre_puzzle)
         print("self_puzzle", self.puzzle)
+        print("self_degree", self.degree)
         return True
 
     def calling_method(self):
