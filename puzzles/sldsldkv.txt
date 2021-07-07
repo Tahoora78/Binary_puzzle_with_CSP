@@ -1,17 +1,7 @@
-        column = [row[x] for row in self.puzzle]
-        if x > (len(self.puzzle[y])-2):
-            # 00- / 0-0 / -00
-            if (column[x] == '0' and column[x+1] == '0' and column[x+2] == '-'):
-                self.degree[x+2][y] = self.degree[x+2][y].replace('0', '')
-            if (column[x] == '0' and column[x+1] == '-' and column[x+2] == '0'):
-                self.degree[x+1][y] = self.degree[x+1][y].replace('0', '')
-            if (column[x] == '-' and column[x+1] == '0' and column[x+2] == '0'):
-                self.degree[x][y] = self.degree[x][y].replace('0', '')
-
-            # 11- / 1-1 / -11
-            if (column[x] == '1' and column[x+1] == '1' and column[x+2] == '-'):
-                self.degree[x+2][y] = self.degree[x+2][y].replace('1', '')
-            if (column[x] == '1' and column[x+1] == '-' and column[x+2] == '1'):
-                self.degree[x+1][y] = self.degree[x+1][y].replace('1', '')
-            if (column[x] == '-' and column[x+1] == '1' and column[x+2] == '1'):
-                self.degree[x][y] = self.degree[x][y].replace('1', '')
+6 6
+- - 1 1 - 1
+- - - 0 1 -
+- - 0 - 0 -
+0 - 1 - 0 -
+- - - - - -
+- - - - - 1
