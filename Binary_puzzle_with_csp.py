@@ -46,7 +46,8 @@ class Puzzle_csp:
             column = [row[i] for row in self.puzzle]
             if not('-' in "".join(column)):
                 for j in range(i+1, len(self.puzzle)):
-                    if ("".join(column) == "".join(self.puzzle[j])):
+                    column2 = [row[j] for row in self.puzzle]
+                    if ("".join(column) == "".join(column2)):
                         return False
 
         return True
@@ -67,9 +68,22 @@ class Puzzle_csp:
             self.one_column.append(column.count('1'))
             self.zero_column.append(column.count('0'))
 
+    def printing_puzzle(self):
+        print("((((((((puzzle))))))))))")
+        for i in self.puzzle:
+            for j in i:
+                print(j, end=',')
+            print()
+        print("((((((((degree))))))))))")
+        for i in self.degree:
+            for j in i:
+                print(j, end=',')
+            print()
 
     def check_possible(self):
         #counting number of zero and one in every column and row
+        print("pppppppppp")
+        self.printing_puzzle()
         num = len(self.puzzle)//2
         print("len self.puzzle", len(self.puzzle))
         for i in range(len(self.puzzle)):
@@ -80,6 +94,7 @@ class Puzzle_csp:
             self.zero_column.append(column.count('0'))
 
             if self.one_row[i] > num or self.zero_row[i] > num or self.one_column[i] > num or self.zero_column[i] > num:
+                print("false pp")
                 return False
 
         #row
@@ -235,17 +250,21 @@ class Puzzle_csp:
     def MRV_heuristic(self):
         pre_puzzle = copy.deepcopy(self.puzzle)
         print("pre_puzzle", pre_puzzle)
+        print("pre_degree", self.degree)
         for i in range(len(self.puzzle)):
             for j in range(len(self.puzzle[i])):
                 if len(self.degree[i][j]) == 1:
                     self.puzzle[i][j] = self.degree[i][j]
                     self.degree[i][j] = self.degree[i][j].replace(self.puzzle[i][j], '')
+                    self.calculate_degree()
+                    return False
 
-        print("after first MRV", self.puzzle)
+        print("after MRV", self.puzzle)
+        print("self_degree", self.degree)
         print("check_similar", self.check_similar(pre_puzzle))
         #print("pre_puzzle", pre_puzzle)
-        print("self_puzzle", self.puzzle)
-        return self.check_similar(pre_puzzle)
+        #return self.check_similar(pre_puzzle)
+        return True
 
     def check_similar(self, pre_puzzle):
         for i in range(len(self.puzzle)):
@@ -268,8 +287,8 @@ class Puzzle_csp:
         while True:
             # fill the certain cells
             while not(self.MRV_heuristic()):
-                self.calculate_degree()
-                if not (self.check_possible()) and len(self.backtrack_puzzles) > 0:
+                #self.calculate_degree()
+                if not (self.check_still_possible()) and len(self.backtrack_puzzles) > 0:
                     self.reverse_MRV()
 
             # if there is still any - in puzzle
@@ -294,5 +313,5 @@ class Puzzle_csp:
                 print("not possible")
                 break
 
-#puzzle_csp = Puzzle_csp()
-#puzzle_csp.calling_methods()
+puzzle_csp = Puzzle_csp()
+puzzle_csp.calling_methods()
