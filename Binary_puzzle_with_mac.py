@@ -277,6 +277,8 @@ class Puzzle_csp:
                     self.puzzle[i][j] = self.degree[i][j]
                     self.degree[i][j] = self.degree[i][j].replace(self.puzzle[i][j], '')
                     self.updating_degrees(i, j)
+                    self.printing_puzzle()
+                    print("-----------------------------------------------")
                     return False
         return True
 
