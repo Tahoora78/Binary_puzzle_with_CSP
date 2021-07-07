@@ -14,7 +14,6 @@ class Puzzle_csp:
         self.one_column = []
 
     def getting_input(self):
-        print("----------getting_input----------")
         nx, ny = input().split(' ')
         for i in range(int(nx)):
             row_string = input()
@@ -23,24 +22,17 @@ class Puzzle_csp:
             row_string = row_string.replace('0', '')
             row_string = row_string.replace('-', '01')
             self.degree.append(row_string.split(' '))
-        print("===================================")
 
     def printing_puzzle(self):
-        print("((((((((puzzle))))))))))")
         for i in self.puzzle:
             for j in i:
-                print(j, end=',')
-            print()
-        print("((((((((degree))))))))))")
-        for i in self.degree:
-            for j in i:
-                print(j, end=',')
+                print(j, end=' ')
             print()
 
     def check_possible(self):
         #counting number of zero and one in every column and row
         num = len(self.puzzle)//2
-        print("len self.puzzle", len(self.puzzle))
+        # print("len self.puzzle", len(self.puzzle))
         for i in range(len(self.puzzle)):
             self.one_row.append(self.puzzle[i].count('1'))
             self.zero_row.append(self.puzzle[i].count('0'))
@@ -56,7 +48,7 @@ class Puzzle_csp:
             for j in range(len(self.puzzle[i])-2):
                 if (self.puzzle[i][j] == '0' and self.puzzle[i][j+1] == '0' and self.puzzle[i][j+2] == '0') or\
                         (self.puzzle[i][j] == '1' and self.puzzle[i][j+1] == '1' and self.puzzle[i][j+2] == '1'):
-                    print("having 3 in row")
+                    # print("having 3 in row")
                     return False
 
         if len(self.puzzle[i]) > 4:
@@ -64,7 +56,7 @@ class Puzzle_csp:
                 for j in range(len(self.puzzle[i])-4):
                     if (self.puzzle[i][j] == '0' and self.puzzle[i][j+1] == '0' and self.puzzle[i][j+2] == '-' and self.puzzle[i][j+3] == '1' and self.puzzle[i][j+4] == '1') or\
                             (self.puzzle[i][j] == '1' and self.puzzle[i][j+1] == '1' and self.puzzle[i][j+2] == '-' and self.puzzle[i][j+3] == '0' and self.puzzle[i][j+4] == '0'):
-                        print("having 00-11 or 11-00 in row")
+                        # print("having 00-11 or 11-00 in row")
                         return False
         #column
         for i in range(len(self.puzzle)):
@@ -72,7 +64,7 @@ class Puzzle_csp:
             for j in range(len(column)-2):
                 if (column[j] == '0' and column[j+1] == '0' and column[j+2] == '0') or\
                         (column[j] == '1' and column[j+1] == '1' and column[j+2] == '1'):
-                    print("having 3 in column")
+                    # print("having 3 in column")
                     return False
 
         if len(self.puzzle[i]) > 4:
@@ -81,7 +73,7 @@ class Puzzle_csp:
                 for j in range(len(column)-4):
                     if (column[j] == '0' and column[j+1] == '0' and column[j+2] == '-' and column[j+3] == '1' and column[j+4] == '1') or\
                             (column[j] == '1' and column[j+1] == '1' and column[j+2] == '-' and column[j+3] == '0' and column[j+4] == '0'):
-                        print("having 00-11 or 11-00 in column")
+                        # print("having 00-11 or 11-00 in column")
                         return False
 
         if self.check_unique():
@@ -104,7 +96,6 @@ class Puzzle_csp:
         self.zero_row = []
         self.zero_column = []
 
-        print("len self.puzzle", len(self.puzzle))
         for i in range(len(self.puzzle)):
             self.one_row.append(self.puzzle[i].count('1'))
             self.zero_row.append(self.puzzle[i].count('0'))
@@ -113,7 +104,6 @@ class Puzzle_csp:
             self.zero_column.append(column.count('0'))
 
     def calculate_degree(self):
-        print("calculate degree")
         self.counting_one_zero()
         num = len(self.puzzle)//2
         #row
@@ -126,7 +116,6 @@ class Puzzle_csp:
                 for j in range(len(self.puzzle[i])):
                     if self.puzzle[i][j] == '-':
                         self.degree[i][j] = '1'
-        print("row checking", self.degree)
 
         #column
         for i in range(len(self.puzzle)):
@@ -138,7 +127,6 @@ class Puzzle_csp:
                 for j in range(len(self.puzzle)):
                     if self.puzzle[j][i] == '-':
                         self.degree[j][i] = '1'
-        print("column checking", self.degree)
 
         #row
         for i in range(len(self.puzzle)):
@@ -158,7 +146,6 @@ class Puzzle_csp:
                     self.degree[i][j+1] = self.degree[i][j+1].replace('1', '')
                 if (self.puzzle[i][j] == '-' and self.puzzle[i][j+1] == '1' and self.puzzle[i][j+2] == '1'):
                     self.degree[i][j] = self.degree[i][j].replace('1', '')
-        print("row repeat checking", self.degree)
 
         #column
         for i in range(len(self.puzzle)):
@@ -179,16 +166,11 @@ class Puzzle_csp:
                     self.degree[j+1][i] = self.degree[j+1][i].replace('1', '')
                 if (column[j] == '-' and column[j+1] == '1' and column[j+2] == '1'):
                     self.degree[j][i] = self.degree[j][i].replace('1', '')
-        print("column repeat checking", self.degree)
 
     def updating_degrees(self, x, y):
-        print("updating_degrees")
         queue_ = self.find_neighbors(x, y)
-        print("neighbors", queue_)
         while len(queue_) > 0:
-            print("quew", queue_, queue_[0][0])
             changed = self.update_cell_degree(queue_[0][0], queue_[0][1])
-            print("changed, x, y: ", changed, x, y)
             current_cell = queue_.pop(0)
             """
             if changed:
@@ -199,7 +181,6 @@ class Puzzle_csp:
 
     def update_cell_degree(self, x, y):
         pre_degree = copy.deepcopy(self.degree[x][y])
-        print("before updating", self.degree)
 
         self.counting_one_zero()
         num = len(self.puzzle)//2
@@ -211,7 +192,6 @@ class Puzzle_csp:
         if self.zero_row[x] == num:
             if self.puzzle[x][y] == '-':
                 self.degree[x][y] = self.degree[x][y].replace('0', '')
-        print("row updating", self.degree)
 
         #column
         if self.one_column[y] == num:
@@ -220,7 +200,6 @@ class Puzzle_csp:
         if self.zero_column[y] == num:
             if self.puzzle[x][y] == '-':
                 self.degree[x][y] = self.degree[x][y].replace('0', '')
-        print("column updating", self.degree)
 
         #column
         # 00-
@@ -247,7 +226,6 @@ class Puzzle_csp:
         if y < len(self.puzzle) - 2:
             if (self.puzzle[x][y] == '-' and self.puzzle[x][y+1] == '1' and self.puzzle[x][y+2] == '1'):
                 self.degree[x][y] = self.degree[x][y].replace('1', '')
-        print("column repeat updating", self.degree)
 
         #row
         # 00-
@@ -274,7 +252,6 @@ class Puzzle_csp:
         if x < len(self.puzzle) - 2:
             if (self.puzzle[x][y] == '-' and self.puzzle[x+1][y] == '1' and self.puzzle[x+2][y] == '1'):
                 self.degree[x][y] = self.degree[x][y].replace('1', '')
-        print("row repeat updating", self.degree)
 
         if pre_degree == self.degree[x][y]:
             return False
@@ -282,61 +259,45 @@ class Puzzle_csp:
             return True
 
     def find_neighbors(self, x, y):
-        print("find_neighbors")
         neighbors = []
         row = self.puzzle[x]
         column = [row[y] for row in self.puzzle]
-        print("______________________________________________")
-        print("column", column)
         for j in range(len(row)):
-            print("row", row[j], end=' ')
             if row[j]=='-' and j!=y:
                 neighbors.append([x, j])
         for i in range(len(row)):
             if column[i]=='-' and i!=x:
                 neighbors.append([i, y])
-        print("len neighbors", len(neighbors))
-        print("neighbors in function", neighbors)
         return neighbors
 
     def MRV_heuristic(self):
-        pre_puzzle = copy.deepcopy(self.puzzle)
-        print("pre_puzzle", pre_puzzle)
         for i in range(len(self.puzzle)):
             for j in range(len(self.puzzle)):
                 if len(self.degree[i][j]) == 1:
                     self.puzzle[i][j] = self.degree[i][j]
                     self.degree[i][j] = self.degree[i][j].replace(self.puzzle[i][j], '')
                     self.updating_degrees(i, j)
-                    print("residam be updating_degrees")
-                    print("mrvmrv i , j", i, j)
                     return False
-        print("after first MRV", self.puzzle)
-        print("self_puzzle", self.puzzle)
-        print("self_degree", self.degree)
         return True
 
     def reverse_MRV(self):
-        print("len backtrack_puzzles", len(self.backtrack_puzzles))
         self.puzzle = self.backtrack_puzzles[-1]
         self.degree = self.backtrack_degrees[-1]
         self.backtrack_degrees.pop()
         self.backtrack_puzzles.pop()
-        print("len backtrack_puzzles after pop", len(self.backtrack_puzzles))
 
         fine = False
         for i in range(len(self.degree)):
             for j in range(len(self.degree)):
                 if len(self.degree[i][j])==2:
                     self.degree[i][j] = self.degree[i][j].replace('0', '')
-                    print("random backtrack", i, j)
                     fine = True
                     break
             if fine:
                 break
 
     def random_choosing(self):
-        print("----------random_choosing----------")
+        # print("----------random_choosing----------")
         # store previous self.degree for backtracking
         self.backtrack_puzzles.append(copy.deepcopy(self.puzzle))
         self.backtrack_degrees.append(copy.deepcopy(self.degree))
@@ -347,8 +308,6 @@ class Puzzle_csp:
             for j in range(len(self.degree)):
                 if len(self.degree[i][j]) == 2:
                     self.degree[i][j] = self.degree[i][j].replace('1', '')
-                    #self.updating_degrees(i, j)
-                    print("random", i, j)
                     fine = True
                     break
             if fine:
@@ -360,7 +319,7 @@ class Puzzle_csp:
             if not('-' in "".join(self.puzzle[i])):
                 for j in range(i+1, len(self.puzzle)):
                     if ("".join(self.puzzle[i]) == "".join(self.puzzle[j])):
-                        print("check_unique row i, j: ", i, j)
+                        # print("check_unique row i, j: ", i, j)
                         return False
 
         # column
@@ -370,7 +329,7 @@ class Puzzle_csp:
                 for j in range(i+1, len(self.puzzle)):
                     column2 = [row[j] for row in self.puzzle]
                     if ("".join(column) == "".join(column2)):
-                        print("check_unique column i, j: ", i, j)
+                        # print("check_unique column i, j: ", i, j)
                         return False
 
         return True
@@ -384,7 +343,7 @@ class Puzzle_csp:
 
     def calling_method(self):
         self.getting_input()
-        self.printing_puzzle()
+        # self.printing_puzzle()
         self.check_possible()
         self.calculate_degree()
         #self.counting_one_zero()
@@ -402,7 +361,8 @@ class Puzzle_csp:
                     self.reverse_MRV()
             else:
                 if self.check_unique():
-                    print("puzzle solved")
+                    # print("puzzle solved")
+                    self.printing_puzzle()
                     break
                 else:
                     # backtrack if we had random_choosing
@@ -412,7 +372,6 @@ class Puzzle_csp:
                         print("not possible because we have non unique row or column")
                         break
             if not(self.check_still_possible()):
-                print("????????????????")
                 self.printing_puzzle()
                 print("not possible")
                 break
